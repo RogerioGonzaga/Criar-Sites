@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Site para venda de sites a pequenos negócios
 
-## Getting Started
+Site comercial em português brasileiro para uma empresa que cria sites para pequenos comerciantes, profissionais autônomos e negócios locais. Feito com **Next.js 16 (App Router), TypeScript e Tailwind CSS 4**, sem bibliotecas extras de interface.
 
-First, run the development server:
+> A marca **"Vitrine"** é um nome provisório. Troque em `src/config/site.ts`.
+
+## O que já está pronto
+
+- **Página inicial** com 12 seções: cabeçalho fixo com menu para celular, hero com mockups de sites (computador e celular), problema, benefícios, galeria de exemplos, como funciona, oferta e preço, comparação, diferenciais, perguntas frequentes, formulário de orçamento, chamada final e rodapé.
+- **Seis demonstrações navegáveis**, cada uma com design, cores e tipografia próprios, identificadas como demonstrações conceituais com nomes fictícios:
+  `/exemplos/barbearia`, `/exemplos/cafeteria`, `/exemplos/loja`, `/exemplos/salao`, `/exemplos/oficina`, `/exemplos/servicos`, além da listagem em `/exemplos`.
+- **WhatsApp como canal principal**: todos os botões de contratação abrem o WhatsApp com mensagem pronta. Nas demonstrações, a mensagem cita o segmento visto. Sem número configurado, os botões levam ao formulário (nenhum link inválido é criado).
+- **Formulário de orçamento** com validação em português, acessível por teclado, consentimento (LGPD), campo anti-robô e envio pelo servidor. A confirmação só aparece quando o serviço configurado responde com sucesso.
+- **Assistente virtual** (janela "Tire suas dúvidas" em todas as páginas do site): responde dúvidas sobre preço, domínio, hospedagem, prazos e como funciona, mostra a demonstração mais parecida com o negócio do visitante e leva para o WhatsApp ou para o pedido de orçamento. Com a chave da IA configurada, as respostas são escritas pela IA Claude, da Anthropic; sem ela, o assistente usa respostas programadas. Nos dois casos ele só usa o que está em `src/config/site.ts` e nas perguntas frequentes, sem inventar preços, prazos ou promessas.
+- **Política de Privacidade** (`/privacidade`), página 404 e páginas de erro personalizadas.
+- **SEO**: `lang="pt-BR"`, títulos e descrições por página, URL canônica, Open Graph, imagem de compartilhamento gerada (`/opengraph-image`), favicon, ícone Apple, `sitemap.xml` e `robots.txt`.
+- **Acessibilidade e desempenho**: HTML semântico, foco visível, link "Pular para o conteúdo", FAQ e menu operáveis por teclado, animações discretas que respeitam a redução de movimento, páginas geradas estaticamente, imagens vetoriais leves feitas dentro do projeto.
+- **Aviso de desenvolvimento**: ao rodar `npm run dev`, um aviso no canto da tela lista o que falta configurar. Ele nunca aparece na versão publicada.
+
+## Como instalar e rodar
+
+Requisito: Node.js 20.9 ou superior.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # desenvolvimento em http://localhost:3000
+npm run build      # gera a versão de produção
+npm start          # roda a versão de produção
+npm run lint       # verificação de código
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuração
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Quase tudo fica em **um único arquivo: `src/config/site.ts`**. Valores ainda não definidos ficam como `null` ou vazios, e o site mostra uma alternativa honesta ("Solicite um orçamento personalizado", "Informado na proposta") em vez de inventar dados.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Variáveis de ambiente ficam em `.env.local` (copie de `.env.example`). Como as páginas são geradas estaticamente, **rode `npm run build` de novo sempre que mudar a configuração**.
 
-## Learn More
+### Nome da marca e cores
+`marca.nome`, `marca.logotipo` (texto do logotipo tipográfico), `marca.descricao` e `cores` em `src/config/site.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+### Preço e plano
+Em `oferta`: `nomePlano`, `preco` (número em reais, ex.: `1490`), `condicoesPagamento`, `descricao`, `paginasOuSecoes`, `revisoesIncluidas`, `prazoEstimado`, `suporte` e `servicosAdicionais`. Com `preco: null`, o card mostra "Solicite um orçamento personalizado."
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### WhatsApp
+`contato.whatsapp` com código do país e DDD, só dígitos (formato: `55` + DDD + número), ou a variável `NEXT_PUBLIC_WHATSAPP`. A mensagem padrão fica em `contato.mensagemWhatsapp`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Domínio e hospedagem
+Em `oferta.dominio`: `incluidoNoPreco` (`true`/`false`), `responsavelRegistro` e `responsavelRenovacao` (textos). Em `oferta.hospedagem`: `incluida` e `detalhe`. Esses valores alimentam o card da oferta, a lista "incluído x cobrado à parte" e o quadro de transparência.
 
-## Deploy on Vercel
+### Dados legais e redes sociais
+`legal.razaoSocial`, `legal.documento` (CNPJ/CPF), `legal.endereco`, `legal.termosUrl` e `contato.redes`. Campos vazios simplesmente não aparecem.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Conectar o formulário a um serviço real
+O envio é feito no servidor (`src/app/acoes/orcamento.ts`); as chaves nunca vão para o navegador. Escolha uma opção no `.env.local`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Webhook** (`FORM_WEBHOOK_URL`): recebe um `POST` em JSON com `nome`, `negocio`, `segmento`, `whatsapp`, `email`, `descricao`, `consentimento`, `origem` e `enviadoEm`. Funciona com Formspree, Make, Zapier, n8n ou Google Apps Script. Opcional: `FORM_WEBHOOK_TOKEN`.
+2. **E-mail pela Resend**: `RESEND_API_KEY`, `ORCAMENTO_EMAIL_PARA` e `ORCAMENTO_EMAIL_DE` (remetente de um domínio verificado na Resend; serviço com plano gratuito e planos pagos).
+
+Sem nenhuma das duas, o formulário monta a mensagem e abre o WhatsApp (se o número estiver configurado). Sem WhatsApp nem envio configurado, o formulário fica desativado com um aviso.
+
+### Ligar a IA do assistente virtual
+1. Crie uma conta em [console.anthropic.com](https://console.anthropic.com), cadastre uma forma de pagamento e gere uma chave de API.
+2. Cadastre a chave como `ANTHROPIC_API_KEY` no `.env.local` ou nas variáveis de ambiente da hospedagem.
+3. Publique novamente. Não é preciso mudar código: a janela de conversa passa a usar a IA sozinha.
+
+Como funciona: a rota `src/app/api/chat/route.ts` roda no servidor (a chave nunca vai para o navegador), envia as últimas mensagens para o modelo `claude-opus-5-5` e devolve o texto aos poucos. As instruções da IA são montadas em `src/lib/assistente/instrucoes.ts` a partir da configuração e das perguntas frequentes; ao mudar preço, prazo ou condições no `site.ts`, o assistente acompanha. Há limites de tamanho das mensagens e de pedidos por visitante para evitar abuso. Cada conversa tem custo por uso na Anthropic; acompanhe no painel deles e, se quiser, defina um limite de gastos por lá. Para trocar o modelo, use `ASSISTENTE_MODELO`.
+
+Sem a chave (ou se a IA falhar), o assistente continua funcionando com as respostas programadas de `src/lib/assistente/respostasLocais.ts`.
+
+### Trocar as ilustrações por fotos
+As demonstrações usam ilustrações vetoriais próprias (`src/components/demos/artes.tsx`). Para usar fotos reais, coloque os arquivos em `public/imagens/` e use o componente `next/image`, sempre com imagens que você tenha direito de uso comercial.
+
+## Como publicar
+
+O jeito mais simples é a **Vercel** (criadora do Next.js, tem plano gratuito):
+
+1. Envie o projeto para um repositório no GitHub.
+2. Em vercel.com, importe o repositório.
+3. Em *Settings > Environment Variables*, cadastre as variáveis do `.env.example`.
+4. Faça o deploy e, em *Settings > Domains*, conecte o domínio da empresa.
+
+Também funciona em qualquer servidor com Node.js (`npm run build` e `npm start`) ou em plataformas como Netlify e Render.
+
+## O que ainda depende do responsável pelo negócio
+
+- Nome definitivo da marca (hoje "Vitrine", provisório).
+- Número do WhatsApp e, se houver, e-mail e redes sociais.
+- Preço, condições de pagamento, prazo, revisões incluídas e suporte.
+- Regras de domínio (quem registra e quem renova) e de hospedagem.
+- Serviço de envio do formulário (webhook ou Resend).
+- Chave da IA do assistente (`ANTHROPIC_API_KEY`), se quiser respostas escritas pela IA.
+- Dados legais (razão social, CNPJ e endereço), se quiser exibi-los.
+- Termos de serviço, se existirem.
+- URL final do site (`NEXT_PUBLIC_SITE_URL`) para o SEO e o sitemap.
+
+## Estrutura
+
+```
+src/
+  config/site.ts            configuração central (marca, contato, oferta, legal)
+  lib/contato.ts            WhatsApp, links de contratação e pendências
+  lib/orcamento.ts          regras e validação do formulário
+  lib/fontes.ts             fontes da marca e das demonstrações
+  lib/oferta.ts             textos da oferta (usados na seção de planos e no assistente)
+  lib/assistente/           base de conhecimento, instruções da IA, respostas programadas e janela de conversa
+  app/
+    (site)/                 página inicial, /exemplos e /privacidade
+    (demos)/exemplos/*      seis demonstrações
+    acoes/orcamento.ts      envio do formulário no servidor
+    api/chat/route.ts       assistente virtual com IA (servidor)
+    sitemap.ts, robots.ts, opengraph-image.tsx, icon.svg, not-found.tsx
+  components/
+    home/                   seções da página inicial
+    assistente/             janela de conversa do assistente virtual
+    demos/                  páginas, ilustrações e catálogo das demonstrações
+    mockups/                molduras de navegador/celular e miniaturas
+    layout/                 cabeçalho, rodapé e logotipo
+    ui/                     botões, ícones e componentes base
+```
