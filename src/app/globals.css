@@ -1,26 +1,108 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-tinta: var(--cor-tinta);
+  --color-papel: var(--cor-papel);
+  --color-destaque: var(--cor-destaque);
+  --color-destaque-escuro: var(--cor-destaque-escuro);
+  --color-grafite: #1a1e1b;
+  --color-suave: #545a53;
+  --color-linha: #e2e3da;
+  --color-nevoa: #eeefe7;
+
+  --font-sans: var(--ff-texto), ui-sans-serif, system-ui, sans-serif;
+  --font-titulo: var(--ff-titulo), ui-sans-serif, system-ui, sans-serif;
+  --font-barbearia: var(--ff-barbearia), Impact, sans-serif;
+  --font-cafeteria: var(--ff-cafeteria), Georgia, serif;
+  --font-loja: var(--ff-loja), ui-sans-serif, sans-serif;
+  --font-salao: var(--ff-salao), Georgia, serif;
+  --font-oficina: var(--ff-oficina), "Arial Narrow", sans-serif;
+  --font-servicos: var(--ff-servicos), ui-sans-serif, sans-serif;
+
+  --shadow-suave: 0 1px 2px rgb(13 16 14 / 0.04), 0 8px 24px -8px rgb(13 16 14 / 0.12);
+  --shadow-elevada: 0 2px 4px rgb(13 16 14 / 0.05), 0 24px 60px -20px rgb(13 16 14 / 0.35);
+
+  --animate-flutuar: flutuar 7s ease-in-out infinite;
+  @keyframes flutuar {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-padding-top: 5.5rem;
+  -webkit-text-size-adjust: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cor-papel);
+  color: var(--cor-tinta);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--cor-destaque);
+  color: var(--cor-tinta);
+}
+
+/* Foco visível e consistente em todo o site */
+:focus-visible {
+  outline: 3px solid #2f6bff;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Animações de entrada durante a rolagem.
+   O conteúdo só fica oculto quando o JavaScript está ativo e o visitante
+   não pediu redução de movimento. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-revelar] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--atraso, 0ms);
+  }
+  .js [data-revelar][data-visivel="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Textura sutil de pontos para fundos */
+.fundo-pontos {
+  background-image: radial-gradient(rgb(13 16 14 / 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.fundo-pontos-claro {
+  background-image: radial-gradient(rgb(255 255 255 / 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.texto-equilibrado {
+  text-wrap: balance;
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
 }
