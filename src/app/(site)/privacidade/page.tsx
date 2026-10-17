@@ -53,6 +53,15 @@ export default function Privacidade() {
             </p>
           </section>
           <section>
+            <h2>Assistente virtual</h2>
+            <p className="mt-3">
+              As mensagens que você escreve no assistente virtual são usadas apenas para responder às suas dúvidas e não são
+              guardadas por nós. A conversa fica salva somente no seu navegador até você fechar a aba. Quando o assistente
+              com inteligência artificial está ativo, o texto da conversa é enviado ao provedor da IA (Anthropic) apenas para
+              gerar a resposta. Por isso, não escreva dados pessoais ou sensíveis na conversa.
+            </p>
+          </section>
+          <section>
             <h2>Cookies</h2>
             <p className="mt-3">
               Este site não utiliza cookies de publicidade nem ferramentas de rastreamento. Caso isso mude, esta política

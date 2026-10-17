@@ -3,7 +3,7 @@ import { Icone, type NomeIcone } from "@/components/ui/Icone";
 import { Revelar } from "@/components/ui/Revelar";
 import { TituloSecao } from "@/components/ui/TituloSecao";
 
-const etapas: { icone: NomeIcone; titulo: string; texto: string }[] = [
+export const etapas: { icone: NomeIcone; titulo: string; texto: string }[] = [
   {
     icone: "conversa",
     titulo: "Conte sobre seu negócio",

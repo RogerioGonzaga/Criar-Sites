@@ -1,5 +1,6 @@
 import { Cabecalho } from "@/components/layout/Cabecalho";
 import { Rodape } from "@/components/layout/Rodape";
+import { Assistente } from "@/components/assistente/Assistente";
 
 export default function LayoutSite({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function LayoutSite({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <Rodape />
+      <Assistente />
     </>
   );
 }

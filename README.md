@@ -11,6 +11,7 @@ Site comercial em português brasileiro para uma empresa que cria sites para peq
   `/exemplos/barbearia`, `/exemplos/cafeteria`, `/exemplos/loja`, `/exemplos/salao`, `/exemplos/oficina`, `/exemplos/servicos`, além da listagem em `/exemplos`.
 - **WhatsApp como canal principal**: todos os botões de contratação abrem o WhatsApp com mensagem pronta. Nas demonstrações, a mensagem cita o segmento visto. Sem número configurado, os botões levam ao formulário (nenhum link inválido é criado).
 - **Formulário de orçamento** com validação em português, acessível por teclado, consentimento (LGPD), campo anti-robô e envio pelo servidor. A confirmação só aparece quando o serviço configurado responde com sucesso.
+- **Assistente virtual** (janela "Tire suas dúvidas" em todas as páginas do site): responde dúvidas sobre preço, domínio, hospedagem, prazos e como funciona, mostra a demonstração mais parecida com o negócio do visitante e leva para o WhatsApp ou para o pedido de orçamento. Com a chave da IA configurada, as respostas são escritas pela IA Claude, da Anthropic; sem ela, o assistente usa respostas programadas. Nos dois casos ele só usa o que está em `src/config/site.ts` e nas perguntas frequentes, sem inventar preços, prazos ou promessas.
 - **Política de Privacidade** (`/privacidade`), página 404 e páginas de erro personalizadas.
 - **SEO**: `lang="pt-BR"`, títulos e descrições por página, URL canônica, Open Graph, imagem de compartilhamento gerada (`/opengraph-image`), favicon, ícone Apple, `sitemap.xml` e `robots.txt`.
 - **Acessibilidade e desempenho**: HTML semântico, foco visível, link "Pular para o conteúdo", FAQ e menu operáveis por teclado, animações discretas que respeitam a redução de movimento, páginas geradas estaticamente, imagens vetoriais leves feitas dentro do projeto.
@@ -57,6 +58,15 @@ O envio é feito no servidor (`src/app/acoes/orcamento.ts`); as chaves nunca vã
 
 Sem nenhuma das duas, o formulário monta a mensagem e abre o WhatsApp (se o número estiver configurado). Sem WhatsApp nem envio configurado, o formulário fica desativado com um aviso.
 
+### Ligar a IA do assistente virtual
+1. Crie uma conta em [console.anthropic.com](https://console.anthropic.com), cadastre uma forma de pagamento e gere uma chave de API.
+2. Cadastre a chave como `ANTHROPIC_API_KEY` no `.env.local` ou nas variáveis de ambiente da hospedagem.
+3. Publique novamente. Não é preciso mudar código: a janela de conversa passa a usar a IA sozinha.
+
+Como funciona: a rota `src/app/api/chat/route.ts` roda no servidor (a chave nunca vai para o navegador), envia as últimas mensagens para o modelo `claude-opus-5-5` e devolve o texto aos poucos. As instruções da IA são montadas em `src/lib/assistente/instrucoes.ts` a partir da configuração e das perguntas frequentes; ao mudar preço, prazo ou condições no `site.ts`, o assistente acompanha. Há limites de tamanho das mensagens e de pedidos por visitante para evitar abuso. Cada conversa tem custo por uso na Anthropic; acompanhe no painel deles e, se quiser, defina um limite de gastos por lá. Para trocar o modelo, use `ASSISTENTE_MODELO`.
+
+Sem a chave (ou se a IA falhar), o assistente continua funcionando com as respostas programadas de `src/lib/assistente/respostasLocais.ts`.
+
 ### Trocar as ilustrações por fotos
 As demonstrações usam ilustrações vetoriais próprias (`src/components/demos/artes.tsx`). Para usar fotos reais, coloque os arquivos em `public/imagens/` e use o componente `next/image`, sempre com imagens que você tenha direito de uso comercial.
 
@@ -78,6 +88,7 @@ Também funciona em qualquer servidor com Node.js (`npm run build` e `npm start`
 - Preço, condições de pagamento, prazo, revisões incluídas e suporte.
 - Regras de domínio (quem registra e quem renova) e de hospedagem.
 - Serviço de envio do formulário (webhook ou Resend).
+- Chave da IA do assistente (`ANTHROPIC_API_KEY`), se quiser respostas escritas pela IA.
 - Dados legais (razão social, CNPJ e endereço), se quiser exibi-los.
 - Termos de serviço, se existirem.
 - URL final do site (`NEXT_PUBLIC_SITE_URL`) para o SEO e o sitemap.
@@ -90,13 +101,17 @@ src/
   lib/contato.ts            WhatsApp, links de contratação e pendências
   lib/orcamento.ts          regras e validação do formulário
   lib/fontes.ts             fontes da marca e das demonstrações
+  lib/oferta.ts             textos da oferta (usados na seção de planos e no assistente)
+  lib/assistente/           base de conhecimento, instruções da IA, respostas programadas e janela de conversa
   app/
     (site)/                 página inicial, /exemplos e /privacidade
     (demos)/exemplos/*      seis demonstrações
     acoes/orcamento.ts      envio do formulário no servidor
+    api/chat/route.ts       assistente virtual com IA (servidor)
     sitemap.ts, robots.ts, opengraph-image.tsx, icon.svg, not-found.tsx
   components/
     home/                   seções da página inicial
+    assistente/             janela de conversa do assistente virtual
     demos/                  páginas, ilustrações e catálogo das demonstrações
     mockups/                molduras de navegador/celular e miniaturas
     layout/                 cabeçalho, rodapé e logotipo

@@ -10,6 +10,8 @@ const caminhos = {
   setaVoltar: <path d="M19 12H5M11 18l-6-6 6-6" />,
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   x: <path d="M6 6l12 12M18 6 6 18" />,
+  recomecar: <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v4h4" />,
+  enviar: <path d="M12 19V5M6 11l6-6 6 6" />,
   menu: <path d="M4 7h16M4 12h16M4 17h10" />,
   mais: <path d="M12 5v14M5 12h14" />,
   globo: (

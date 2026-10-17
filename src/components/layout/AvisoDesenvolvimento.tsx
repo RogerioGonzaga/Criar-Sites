@@ -9,7 +9,7 @@ export function AvisoDesenvolvimento() {
   const pendencias = pendenciasConfiguracao();
   if (pendencias.length === 0) return null;
   return (
-    <details className="fixed right-4 bottom-4 z-[60] max-w-[calc(100vw-2rem)] rounded-2xl border border-amber-300 bg-amber-50 text-sm text-amber-950 shadow-elevada sm:max-w-sm">
+    <details className="fixed left-4 bottom-4 z-[60] max-w-[calc(100vw-2rem)] rounded-2xl border border-amber-300 bg-amber-50 text-sm text-amber-950 shadow-elevada sm:max-w-sm">
       <summary className="cursor-pointer px-4 py-3 font-semibold">
         Desenvolvimento: {pendencias.length} configuração(ões) pendente(s)
       </summary>
